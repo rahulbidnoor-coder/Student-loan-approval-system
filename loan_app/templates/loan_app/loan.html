@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Loan Check</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+
+            background: url('https://images.unsplash.com/photo-1563013544-824ae1b704d3') no-repeat center/cover;
+
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Dark overlay */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+        }
+
+        .card {
+            position: relative;
+            z-index: 1;
+
+            background: white;
+            padding: 40px;
+            border-radius: 18px;
+            width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        /* Blur background when popup shows */
+        body.popup-active .card {
+            filter: blur(5px);
+            pointer-events: none;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg, #007bff, #00c6ff);
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            z-index: 9999;
+        }
+
+        .popup-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            width: 350px;
+        }
+
+        .popup button {
+            margin-top: 15px;
+            background: #28a745;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>💰 Loan Eligibility</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="name" placeholder="Enter Name" required>
+
+        <input type="number" name="percentage" placeholder="Enter Percentage" required>
+
+        <select name="stream" required>
+            <option value="">Select Stream</option>
+            <option value="engineering">Engineering</option>
+            <option value="medical">Medical</option>
+            <option value="other">Other</option>
+        </select>
+
+        <input type="number" name="amount" placeholder="Required Loan Amount (₹)" required>
+
+        <button type="submit">Check Loan</button>
+    </form>
+</div>
+
+{% if result %}
+<div class="popup" id="popup">
+    <div class="popup-content">
+        <p>{{ result }}</p>
+
+        <div class="btn-group">
+            <button onclick="closePopup()">OK</button>
+            <button class="plan-btn" onclick="goToPlans()">Repayment Plans</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.plan-btn {
+    background: #ffc107;
+}
+</style>
+
+<script>
+document.body.classList.add("popup-active");
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.body.classList.remove("popup-active");
+}
+
+function goToPlans() {
+    window.location.href = "/repayment/";
+}
+</script>
+{% endif %}
+
+</body>
+</html>
